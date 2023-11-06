@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--
+  Eric Wan
+  CSE 154 AB
+  FP
+  The main page of ZaShop. Shows the different variety of products (computers, phones, merch), a
+  search bar and a login or create account option.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css">
+    <script src="index.js"></script>
+    <title>ZaShop Main</title>
+  </head>
+  <body>
+    <section class="navbar">
+      <a href="cart.html">Cart</a>
+      <a href="my-account.html" class="hidden">My Account</a>
+      <a href="create-account.html">Create Account</a>
+      <a href="login.html">Login</a>
+    </section>
+    <header>
+      <h1>ZaShop</h1>
+      <p>Welcome to ZaShop, za best shop in da world!</p>
+    </header>
+    <main>
+      <section id="search-bar">
+        <form class="search-btn" action="search.html">
+          <input type="text" id="search-query" placeholder="Search.." name="search">
+          <button type="submit"></button>
+        </form>
+      </section>
+      <section id="categories">
+        <div class="category">
+          <img src="img/computer-icon.png" alt="computer category img">
+          <p>Computers</p>
+        </div>
+        <div class="category">
+          <img src="img/phone-icon.png" alt="phone category img">
+          <p>Phones</p>
+        </div>
+        <div class="category">
+          <img src="img/merch-icon.png" alt="merch category img">
+          <p>Merch</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+header {
+  margin-top: 100px;
+  justify-content: center;
+}
+
+header, .navbar a, .category, h1 {
+  text-align: center;
+}
+
+header h1 {
+  text-transform: uppercase;
+  font-size: 50px;
+}
+
+h1 {
+  margin-top: 70px;
+}
+
+.navbar {
+  position: fixed;
+  background-color: burlywood;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.navbar a {
+  float: right;
+  color: lightblue;
+  text-decoration: none;
+  padding: 10px 10px;
+  background-color: antiquewhite;
+  margin: 5px;
+}
+
+.search-btn {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+  margin: auto;
+}
+
+form.search-btn input[type=text], form.search-btn button {
+  padding: 10px;
+  border: 1px solid grey;
+}
+
+form.search-btn input[type=text] {
+  background: #f1f1f1;
+  font-size: 15px;
+  width: 80%;
+}
+
+form.search-btn button {
+  background-image: url("img/search-icon.png");
+  background-color: aqua;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 20%;
+  cursor: pointer;
+}
+
+form.search-btn button img {
+  width: 100%;
+}
+
+form.search-btn::after {
+  content: "";
+}
+
+#categories {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.category {
+  width: 160px;
+  height: 170px;
+  padding: 15px;
+  border: 0.3em solid black;
+  cursor: pointer;
+  margin: auto;
+  background-color: antiquewhite;
+}
+
+.category img {
+  width: 100px;
+  height: 100px;
+  margin-top: 5px;
+  object-fit: contain;
+}
+
+.product, .cozy, #options-display, .compact {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.cozy, .compact {
+  justify-content: center;
+}
+
+.cozy > div {
+  width: 300px;
+  height: 300px;
+  border: 10px solid blue;
+  margin: 20px;
+}
+
+.compact > div {
+  width: 200px;
+  height: 200px;
+  border: 7px solid blue;
+  margin: 10px;
+}
+
+.product, #options-display {
+  justify-content: space-evenly;
+  text-align: center;
+}
+
+.cozy > div img {
+  width: 100px;
+  height: 100px;
+  object-fit: fill;
+}
+
+.compact > div img {
+  width: 60px;
+  height: 60px;
+}
+
+.product img, .product div {
+  margin: auto;
+}
+
+.hidden {
+  display: none;
+}

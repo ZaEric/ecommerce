@@ -1,0 +1,54 @@
+body {
+  background-color: wheat;
+}
+
+header, .account-container, .account-form, .error-msg {
+  text-align: center;
+}
+
+header h1 {
+  font-size: 40px;
+}
+
+.account-container, .account-form {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  justify-content: center;
+}
+
+.account-container {
+  width: 350px;
+  height: 350px;
+  background-color: cornflowerblue;
+}
+
+.account-form {
+  width: 80%;
+  height: 80%;
+}
+
+.account-form input {
+  margin: 10px;
+  height: 30px;
+}
+
+.account-form button {
+  text-transform: uppercase;
+  background-color: lightgreen;
+  height: 30px;
+}
+
+.account-container p {
+  background-color: beige;
+}
+
+.error-msg {
+  width: 350px;
+  background-color: indianred;
+  margin: auto;
+}
+
+.hidden {
+  display: none;
+}

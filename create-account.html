@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!--
+  Eric Wan
+  CSE 154 AB
+  FP
+  This is the login page for ZaShop.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="account.css">
+    <script src="account.js"></script>
+    <title>ZaShop Create Account</title>
+  </head>
+  <body>
+    <header>
+      <h1>Create an Account</h1>
+    </header>
+    <main>
+      <section class="account-container">
+        <form class="account-form" name="account">
+          <input type="text" placeholder="Enter Email" name="email" required>
+          <input type="text" placeholder="Enter Username" name="uname" required>
+          <input type="text" placeholder="Enter Password" name="pwrd" required>
+          <input type="text" placeholder="Confirm Password" name="cpwrd" required>
+          <button type="submit" id="create-btn">Register Account</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Login</a></p>
+      </section>
+      <section class="error-msg hidden">
+        <p>Error msg</p>
+      </section>
+    </main>
+  </body>
+</html>
