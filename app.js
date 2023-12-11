@@ -17,10 +17,10 @@ const cookieParser = require('cookie-parser');
 const INVALID_PARAM_ERROR = 400;
 const SERVER_ERROR = 500;
 const DEFAULT_PORT = 8000;
-const PERSIST_AGE = 200000 * 1000;
+const PERSIST_AGE = 200000000;
 const SERVER_ERROR_MSG = 'An error occured on the server. Try again later.';
 const MISSING_PARAM_MSG = 'Missing one or more of the required parameters.';
-const NO_SESSION_MSG = 'Please login first before trying this!'
+const NO_SESSION_MSG = 'Please login first before trying this!';
 const INVALID_SESSION_MSG = "Login session is invalid, user doesn't exist!";
 
 // other required modules ...
@@ -56,10 +56,9 @@ app.post('/account/create', async function(req, res) {
   } else {
     try {
       let db = await getDBConnection();
-      let qry = "INSERT INTO users (email, uname, pwrd) VALUES (?, ?, ?);"
+      let qry = "INSERT INTO users (email, uname, pwrd) VALUES (?, ?, ?);";
       let results = await db.run(qry, [email, uname, pwrd]);
       await db.close();
-      // console.log(results);
       if (results.changes === 1) {
         res.cookie('session', uname, {maxAge: PERSIST_AGE, sameSite: 'lax'});
         res.type("text").send("Successfully created account for " + uname);
@@ -88,17 +87,15 @@ app.post('/account/login', async function(req, res) {
   } else {
     try {
       let db = await getDBConnection();
-      // if (!(await checkLoginStatus(req.cookies, db, res))) return;
       let results = await db.get("SELECT uname FROM users WHERE uname=? AND pwrd=?", [uname, pwrd]);
       await db.close();
       if (results && results.length !== 0) {
         res.cookie('session', results.uname, {maxAge: PERSIST_AGE, sameSite: 'lax'});
         res.type('text').send("Welcome back, " + results.uname + ".");
       } else {
-        handleRequestError(res, "Incorrect username or password! Please try again.")
+        handleRequestError(res, "Incorrect username or password! Please try again.");
       }
     } catch (err) {
-      // console.log(err);
       handleServerError(res);
     }
   }
@@ -113,11 +110,12 @@ app.post('/account/login', async function(req, res) {
  * @returns {boolean} - True if all inputs valid, false otherwise
  */
 function checkRegisterInputs(email, uname, pwrd) {
+  const min_length = 5;
   if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
     return "Please enter a valid email.";
   } else if (!uname.match(/^[\w]+$/)) {
     return "Username must contain only letters and numbers (underscores are allowed).";
-  } else if (pwrd.length < 5) {
+  } else if (pwrd.length < min_length) {
     return "Password must be least 6 characters long.";
   } else if (!pwrd.match(/(?=.*\d)(?=.*[A-Z])/)) {
     return "Password must contain at least one uppercase letter and number";
@@ -134,23 +132,22 @@ function checkRegisterInputs(email, uname, pwrd) {
 app.get('/product/search', async function(req, res) {
   try {
     let db = await getDBConnection();
-    let query = "SELECT id, name, image, price FROM products";
+    let qry = "SELECT id, name, image, price FROM products";
     let results;
     if (req.query['query']) {
-      query += " WHERE name LIKE ? OR description LIKE ?;";
-      results = await db.all(query, ["%" + req.query['query'] + "%", "%" + req.query['query'] + "%"]);
+      qry += " WHERE name LIKE ? OR description LIKE ?;";
+      results = await db.all(qry, ["%" + req.query['query'] + "%", "%" + req.query['query'] + "%"]);
     } else if (req.query['category']) {
-      query += " WHERE category=?;";
-      results = await db.all(query, req.query['category']);
+      qry += " WHERE category=?;";
+      results = await db.all(qry, req.query['category']);
     } else {
-      query += ";"
-      results = await db.all(query);
+      results = await db.all(qry);
     }
     await db.close();
     if (results.length === 0) {
       handleRequestError(res, "No products matching query. Please try a different input.");
     } else {
-      res.json({"products" : results});
+      res.json({"products": results});
     }
   } catch (err) {
     handleServerError(res);
@@ -171,7 +168,7 @@ app.get('/product/get/:id', async function(req, res) {
     if (result) {
       res.json(result);
     } else {
-      handleRequestError(res, "Product id does not exist in ZaShop!")
+      handleRequestError(res, "Product id does not exist in ZaShop!");
     }
   } catch (err) {
     handleServerError(res);
@@ -188,19 +185,20 @@ app.get('/cart/add/:id', async function(req, res) {
   try {
     let id = req.params.id;
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) return;
+    if (!(await checkLoginStatus(req.cookies, db, res))) {
+      return;
+    }
     let name = await db.get("SELECT name FROM products WHERE id=?;", id);
     await db.close();
     if (name) {
       let [cart, count] = formatCart(req.cookies, id);
       res.cookie('cart', cart, {maxAge: PERSIST_AGE, sameSite: 'lax'});
-      let msg = "Successfully added " + name.name + " into cart (Count: " + count + ")."
+      let msg = "Successfully added " + name.name + " into cart (Count: " + count + ").";
       res.type('text').send(msg);
     } else {
       handleRequestError(res, "Product does not exist!");
     }
   } catch (err) {
-    console.log(err);
     handleServerError(res);
   }
 });
@@ -217,16 +215,15 @@ function formatCart(cookies, id) {
   if (cart) {
     let cartMap = JSON.parse(cart);
     if (cartMap[id]) {
-      cartMap[id] = cartMap[id]+1;
+      cartMap[id] = cartMap[id] + 1;
     } else {
       cartMap[id] = 1;
     }
     return [JSON.stringify(cartMap), cartMap[id]];
-  } else {
-    let cartMap = {};
-    cartMap[id] = 1;
-    return [JSON.stringify(cartMap), 1];
   }
+  let cartMap = {};
+  cartMap[id] = 1;
+  return [JSON.stringify(cartMap), 1];
 }
 
 /**
@@ -235,17 +232,19 @@ function formatCart(cookies, id) {
 app.get('/cart/all', async function(req, res) {
   try {
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) return;
+    if (!(await checkLoginStatus(req.cookies, db, res))) {
+      return;
+    }
     if (req.cookies['cart']) {
       let cartMap = JSON.parse(req.cookies['cart']);
       let query = "SELECT id, name, image, price FROM products WHERE";
       let keys = Object.keys(cartMap);
-      keys.forEach(item => query += (" id="+item + " OR"));
+      keys.forEach((item) => {query += (" id=" + item + " OR")});
       query = query.substring(0, query.length - 3) + ";";
       let results = await db.all(query);
       await db.close();
-      results.forEach(product => product['count'] = cartMap[product.id]);
-      res.type('json').send({"products" : results});
+      results.forEach((product) => {product['count'] = cartMap[product.id]});
+      res.json({"products": results});
     } else {
       handleRequestError(res, "Cart is empty. Please add products to cart first.");
     }
@@ -261,13 +260,15 @@ app.get('/cart/all', async function(req, res) {
 app.get('/cart/purchase', async function(req, res) {
   try {
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) return;
-    if(req.cookies['cart']) {
+    if (!(await checkLoginStatus(req.cookies, db, res))) {
+      return;
+    }
+    if (req.cookies['cart']) {
       let cartMap = JSON.parse(req.cookies['cart']);
       let priceCheck = await processCart(req.cookies, cartMap, db);
-      if(priceCheck[0]) {
+      if (priceCheck[0]) {
         for (const [key, value] of Object.entries(cartMap)) {
-          let qry = "INSERT INTO transactionItems (p_id, count, t_id) VALUES (?, ?, ?);"
+          let qry = "INSERT INTO transactionItems (p_id, count, t_id) VALUES (?, ?, ?);";
           await db.run(qry, [parseInt(key), value, priceCheck[1]]);
         }
         res.type('text').send("Successfully completed purchase. Transaction id: " + priceCheck[1]);
@@ -278,7 +279,6 @@ app.get('/cart/purchase', async function(req, res) {
       handleRequestError(res, "Cart is empty. Please add products to cart first.");
     }
   } catch (err) {
-    console.log(err);
     handleServerError(res);
   }
 });
@@ -288,7 +288,9 @@ app.get('/cart/purchase', async function(req, res) {
  * by the count value from cartMap. This also verifies whether all products in the cart actually
  * exist and the cookie isn't corrupted in some way. If cart is valid, create a transaction and
  * return its confirmation msg and whether transaction succeeded or not.
+ * @param {object} cookies - cookies from client
  * @param {object} cartMap - parsed cart cookie data in the form of a map
+ * @param {object} db - database where products table is stored
  * @return {[boolean, number]} - [whether purchase succeeded, trans-id or error msg]
  */
 async function processCart(cookies, cartMap, db) {
@@ -303,14 +305,14 @@ async function processCart(cookies, cartMap, db) {
   }
   let bal = await getBalance(cookies, db);
   if (bal < total) {
-    return [false, "Not enough money for this transaction! Please add more funds."]
+    return [false, "Not enough money for this transaction! Please add more funds."];
   }
   let id = await db.get("SELECT COUNT(*) FROM transactions WHERE uname=?", cookies['session']);
-  let trans_id = cookies['session'] + "-" + (id["COUNT(*)"] + 1);
+  let transId = cookies['session'] + "-" + (id["COUNT(*)"] + 1);
   let qry = "INSERT INTO transactions (t_id, uname, cost) VALUES (?, ?, ?);";
-  await db.run(qry, [trans_id, cookies['session'], total]);
-  await db.run("UPDATE users SET bal=? WHERE uname=?;", [bal-total, cookies['session']]);
-  return [true, trans_id];
+  await db.run(qry, [transId, cookies['session'], total]);
+  await db.run("UPDATE users SET bal=? WHERE uname=?;", [bal - total, cookies['session']]);
+  return [true, transId];
 }
 
 // Account related back-end
@@ -339,7 +341,9 @@ app.post('/account/add', async function(req, res) {
   if (amount) {
     try {
       let db = await getDBConnection();
-      if (!(await checkLoginStatus(req.cookies, db, res))) return;
+      if (!(await checkLoginStatus(req.cookies, db, res))) {
+        return;
+      }
       let bal = await getBalance(req.cookies, db);
       bal = parseInt(amount) + bal;
       await db.run("UPDATE users SET bal=? WHERE uname=?", [bal, req.cookies['session']]);
@@ -359,17 +363,18 @@ app.post('/account/add', async function(req, res) {
 app.get('/account/history', async function(req, res) {
   try {
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) return;
+    if (!(await checkLoginStatus(req.cookies, db, res))) {
+      return;
+    }
     let uname = req.cookies['session'];
-    let t_ids = await db.all("SELECT t_id FROM transactions WHERE uname=?", uname);
+    let tIds = await db.all("SELECT t_id FROM transactions WHERE uname=?", uname);
     let results = {};
-    for (const t_id of t_ids) {
-      let transaction = await formatResult(t_id.t_id, db);
-      results[t_id.t_id] = transaction;
+    for (const tId of tIds) {
+      let transaction = await formatResult(tId.t_id, db);
+      results[tId.t_id] = transaction;
     }
     res.json(results);
   } catch (err) {
-    console.log(err);
     handleServerError(res);
   }
 });
@@ -377,15 +382,15 @@ app.get('/account/history', async function(req, res) {
 /**
  * Gets transaction items for a specific transaction id and return it in a formatted manner
  * that makes it easy to parse.
- * @param {string} t_id - transaction id
+ * @param {string} tId - transaction id
  * @param {object} db - database containing necessary tables
  * @returns {object} - detailed info (date, cost, products) of the given transaction
  */
-async function formatResult(t_id, db) {
-  let result = await db.get("SELECT date, cost FROM transactions WHERE t_id=?", t_id);
+async function formatResult(tId, db) {
+  let result = await db.get("SELECT date, cost FROM transactions WHERE t_id=?", tId);
   let qry = "SELECT p.id, p.name, p.image, p.price, t.count FROM products p, transactionItems t"
   + " WHERE p.id=t.p_id AND t.t_id=?";
-  let products = await db.all(qry, t_id);
+  let products = await db.all(qry, tId);
   result['products'] = products;
   return result;
 }
@@ -411,11 +416,10 @@ async function checkLoginStatus(cookies, db, res) {
       handleRequestError(res, INVALID_SESSION_MSG);
       return false;
     }
-  } else {
-    await db.close();
-    handleRequestError(res, NO_SESSION_MSG);
-    return false;
   }
+  await db.close();
+  handleRequestError(res, NO_SESSION_MSG);
+  return false;
 }
 
 /**
@@ -435,7 +439,8 @@ async function getBalance(cookies, db) {
  * @param {string} msg - error message to send back to client
  */
 function handleRequestError(res, msg) {
-  res.type('text').status(INVALID_PARAM_ERROR).send(msg);
+  res.type('text').status(INVALID_PARAM_ERROR);
+  res.send(msg);
 }
 
 /**
@@ -443,7 +448,8 @@ function handleRequestError(res, msg) {
  * @param {object} res - response to send back to client caller
  */
 function handleServerError(res) {
-  res.type('text').status(SERVER_ERROR).send(SERVER_ERROR_MSG);
+  res.type('text').status(SERVER_ERROR);
+  res.send(SERVER_ERROR_MSG);
 }
 
 /**

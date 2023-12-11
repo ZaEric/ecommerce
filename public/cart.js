@@ -24,7 +24,6 @@
    * Retrieves all the items currently in cart and displays it to the user.
    */
   function getCart() {
-    console.log("getCart called");
     id("products-list").innerHTML = "";
     fetch('/cart/all')
       .then(statusCheck)
@@ -50,7 +49,7 @@
     fetch("/account/balance")
       .then(statusCheck)
       .then(res => res.text())
-      .then(res => id("current-bal").textContent = "Current balance: $" + res)
+      .then(res => {id("current-bal").textContent = "Current balance: $" + res})
       .catch(displayError);
   }
 
@@ -116,7 +115,7 @@
         id("checkout-btn").disabled = true;
         clearCart();
       })
-      .catch(displayError)
+      .catch(displayError);
   }
 
   /**

@@ -17,7 +17,7 @@
     handleSearch("");
     let radios = qsa("input[name='product-display']");
     radios.forEach((radio) => {
-      radio.addEventListener("change", toggleProductDisplay)
+      radio.addEventListener("change", toggleProductDisplay);
     });
     id("filter-select").addEventListener("change", filterProducts);
     id("search-bar").addEventListener("submit", searchProducts);
@@ -40,7 +40,11 @@
    */
   function filterProducts() {
     let filter = this.value;
-    handleSearch("?category=" + filter.toLowerCase());
+    if (filter === "none") {
+      handleSearch("");
+    } else {
+      handleSearch("?category=" + filter.toLowerCase());
+    }
   }
 
   /**
@@ -68,8 +72,8 @@
       .then((res) => {
         let display = id("search-result");
         display.innerHTML = "";
-        res['products'].forEach((res) => {
-          let product = makeProduct(res);
+        res['products'].forEach((prod) => {
+          let product = makeProduct(prod);
           product.addEventListener("click", getProductDetails);
           id("search-result").appendChild(product);
         });
@@ -158,6 +162,9 @@
     id("error-msg").textContent = err.message;
   }
 
+  /**
+   * Toggles search display between products list and detailed product display.
+   */
   function toggleDisplay() {
     id("error-msg").classList.add("hidden");
     id("cart-msg").classList.add("hidden");

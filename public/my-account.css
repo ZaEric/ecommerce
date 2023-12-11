@@ -28,7 +28,7 @@
 .product {
   margin-left: 20px;
   margin-top: 10px;
-  margin-bottom: 10px
+  margin-bottom: 10px;
 }
 
 .name {
@@ -64,4 +64,12 @@ h2 {
 
 .hidden {
   display: none;
+}
+
+h1, h2 {
+  font-family: 'Sumana', serif;
+}
+
+body {
+  font-family: 'Victor Mono', monospace;
 }

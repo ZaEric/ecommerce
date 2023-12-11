@@ -57,7 +57,7 @@
     let uname = qs("input[name='uname']").value;
     let pwrd = qs("input[name='pwrd']").value;
     let cpwrd = qs("input[name='cpwrd']").value;
-    if (pwrd != cpwrd) {
+    if (pwrd !== cpwrd) {
       displayMessage("Passwords are not the same.");
     } else {
       let data = new FormData();
@@ -81,7 +81,7 @@
    * @param {string} msg - error msg to be displayed to user
    * @param {boolean} [error=true] - true if error, false if its a success message instead
    */
-  function displayMessage(msg, error=true) {
+  function displayMessage(msg, error = true) {
     if (!error) {
       id("display-msg").classList.remove("error-msg");
       id("display-msg").classList.add("success-msg");

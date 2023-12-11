@@ -12,7 +12,7 @@
   /**
    * Sets up event listner of logout button and checks if user is logged in on load.
    */
-  function init () {
+  function init() {
     checkLogin();
     id("logout-nav").addEventListener("click", handleLogOut);
   }
@@ -22,7 +22,6 @@
    */
   async function checkLogin() {
     const session = await cookieStore.get('session');
-    console.log(session);
     if (session) {
       loginToggle();
     }
@@ -43,7 +42,6 @@
    * Logs the user out by removing the session cookie and reloading the page.
    */
   async function handleLogOut() {
-    console.log("logout pressed");
     await cookieStore.delete('session');
     window.location.reload();
   }

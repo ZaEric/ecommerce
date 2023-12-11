@@ -61,7 +61,6 @@
    * @returns {object} - formated metadata
    */
   function formatMeta(transaction, key) {
-    console.log("meta: " + key);
     let container = gen("section");
     container.classList.add("metadata");
     let date = gen("p");
@@ -112,7 +111,7 @@
     fetch("/account/balance")
       .then(statusCheck)
       .then(res => res.text())
-      .then(res => qs("#current-bal p").textContent = "Wallet Balance: $" + res)
+      .then(res => {qs("#current-bal p").textContent = "Wallet Balance: $" + res})
       .catch(displayError);
   }
 
@@ -127,9 +126,10 @@
       .then(statusCheck)
       .then(res => res.text())
       .then((res) => {
+        const index = 17;
         id("success-msg").textContent = res;
         let oldBal = qs("#current-bal p").textContent;
-        let newBal = parseInt(oldBal.substring(17)) + parseInt(amount);
+        let newBal = parseInt(oldBal.substring(index)) + parseInt(amount);
         qs("#current-bal p").textContent = "Wallet Balance: $" + newBal;
       })
       .catch(displayError);
