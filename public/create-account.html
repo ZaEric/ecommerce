@@ -19,15 +19,17 @@
     <main>
       <section class="account-container">
         <form class="account-form" name="account">
-          <input type="text" placeholder="Enter Email" name="email" required>
-          <input type="text" placeholder="Enter Username" name="uname" required>
-          <input type="text" placeholder="Enter Password" name="pwrd" required>
-          <input type="text" placeholder="Confirm Password" name="cpwrd" required>
-          <button type="submit" id="create-btn">Register Account</button>
+          <fieldset>
+            <input type="text" placeholder="Enter Email" name="email" required>
+            <input type="text" placeholder="Enter Username" name="uname" required>
+            <input type="text" placeholder="Enter Password" name="pwrd" required>
+            <input type="text" placeholder="Confirm Password" name="cpwrd" required>
+            <button id="create-btn">Register Account</button>
+          </fieldset>
         </form>
         <p>Already have an account? <a href="login.html">Login</a></p>
       </section>
-      <section class="error-msg hidden">
+      <section id="display-msg" class="error-msg hidden">
         <p>Error msg</p>
       </section>
     </main>

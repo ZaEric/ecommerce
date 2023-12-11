@@ -19,13 +19,15 @@
     <main>
       <section class="account-container">
         <form class="account-form" name="account">
-          <input type="text" placeholder="Enter Username" name="uname" required>
-          <input type="text" placeholder="Enter Password" name="pwrd" required>
-          <button type="submit" id="login-btn">Login</button>
+          <fieldset>
+            <input type="text" placeholder="Enter Username" name="uname" required>
+            <input type="text" placeholder="Enter Password" name="pwrd" required>
+            <button type="submit" id="login-btn">Login</button>
+          </fieldset>
         </form>
         <p>Not registered? <a href="create-account.html">Create an account</a></p>
       </section>
-      <section class="error-msg hidden">
+      <section id="display-msg" class="error-msg hidden">
         <p>Error msg</p>
       </section>
     </main>

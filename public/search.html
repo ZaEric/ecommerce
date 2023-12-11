@@ -10,65 +10,68 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="nav-bar.css">
     <script src="search.js"></script>
+    <script src="account-validation.js"></script>
     <title>ZaShop Search</title>
   </head>
   <body>
     <section class="navbar">
       <a href="cart.html">Cart</a>
-      <a href="my-account.html" class="hidden">My Account</a>
-      <a href="create-account.html">Create Account</a>
-      <a href="login.html">Login</a>
+      <a id="logout-nav" class="hidden">Logout</a>
+      <a id="myaccount-nav" href="my-account.html" class="hidden">My Account</a>
+      <a id="createaccount-nav" href="create-account.html">Create Account</a>
+      <a id="login-nav" href="login.html">Login</a>
+      <a href="search.html">Search</a>
     </section>
     <main>
-      <h1>Search</h1>
-      <section id="search-bar">
-        <form class="search-btn" action="search.html">
-          <input type="text" id="search-query" placeholder="Search.." name="search">
-          <button type="submit"></button>
-        </form>
+      <section id="search-area">
+        <h1>Search</h1>
+        <section>
+          <form id="search-bar" action="search.html">
+            <input type="text" id="search-query" placeholder="Search.." name="search">
+            <button type="submit"></button>
+          </form>
+        </section>
+        <section id="options-display">
+          <article>
+            <h2>Choose display option</h2>
+            <p>
+              <label><input type="radio" name="product-display" value="cozy" checked>Cozy</label>
+              <label><input type="radio" name="product-display" value="compact">Compact</label>
+            </p>
+          </article>
+          <article>
+            <h2>Filter by:</h2>
+            <select id="filter-select">
+              <option value="none" selected>None</option>
+              <option value="computer">Computer</option>
+              <option value="phone">Phone</option>
+              <option value="merch">Merch</option>
+            </select>
+          </article>
+        </section>
+        <section id="search-result" class="cozy">
+        </section>
       </section>
-      <section id="options-display">
-        <article>
-          <h2>Choose display option</h2>
-          <p>
-            <label><input type="radio" name="product-display" value="cozy" checked>Cozy</label>
-            <label><input type="radio" name="product-display" value="compact">Compact</label>
-          </p>
-        </article>
-        <article>
-          <h2>Filter by:</h2>
-          <select id="filter-select">
-            <option value="none" selected>None</option>
-            <option value="computer">Computer</option>
-            <option value="phone">Phone</option>
-            <option value="merch">Merch</option>
-          </select>
-        </article>
+      <section id="product-display" class="hidden">
+        <button id="back-btn">Back</button>
+        <section class="product-detail">
+          <div id="product-image">
+            <img>
+          </div>
+          <div id="product-detail-text">
+            <p id="product-detail-name"></p>
+            <p id="product-description"></p>
+            <div id="product-detail-bottom">
+              <p></p>
+              <button id="add-cart-btn">Add to cart</button>
+            </div>
+          </div>
+        </section>
+        <p id="cart-msg" class="hidden"></p>
       </section>
-      <section id="search-result" class="cozy">
-        <div class="product computer">
-          <img src="img/example1.jpg" alt="example1 jpg">
-          <div class="product-text">
-            <p>Example1</p>
-            <p>$1000</p>
-          </div>
-        </div>
-        <div class="product phone">
-          <img src="img/example2.jpg" alt="example2 jpg">
-          <div class="product-text">
-            <p>Example2</p>
-            <p>$1000</p>
-          </div>
-        </div>
-        <div class="product merch">
-          <img src="img/example3.jpg" alt="example3 jpg">
-          <div class="product-text">
-            <p>Example3</p>
-            <p>$1000</p>
-          </div>
-        </div>
-      </section>
+      <h2 id="error-msg" class="hidden">Error msg.</h2>
     </main>
   </body>
 </html>

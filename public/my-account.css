@@ -1,0 +1,67 @@
+.display {
+  text-align: center;
+  width: 80%;
+  margin: auto;
+  margin-top: 80px;
+  background-color: bisque;
+}
+
+#transaction-list, #transaction, .metadata, .products, .product, .product-text {
+  display: flex;
+}
+
+#transaction-list, #transaction, .products, .product-text {
+  flex-direction: column;
+}
+
+.transaction {
+  border: grey 4px solid;
+  background-color: white;
+  margin-bottom: 10px;
+}
+
+.metadata {
+  justify-content: space-evenly;
+  background-color: #bdbdbd;
+}
+
+.product {
+  margin-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px
+}
+
+.name {
+  padding-left: 20px;
+  font-size: 20px;
+}
+
+.product img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.count {
+  padding-left: 20px;
+  font-size: 15px;
+}
+
+.fund {
+  margin-top: 20px;
+}
+
+#transaction-h1:hover {
+  cursor: pointer;
+  background-color: salmon;
+}
+
+h2 {
+  width: 80%;
+  margin: auto;
+  margin-top: 80px;
+}
+
+.hidden {
+  display: none;
+}

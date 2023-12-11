@@ -1,0 +1,20 @@
+.navbar {
+  position: fixed;
+  background-color: burlywood;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.navbar a {
+  float: right;
+  color: lightblue;
+  text-decoration: none;
+  padding: 10px 10px;
+  background-color: antiquewhite;
+  margin: 5px;
+}
+
+.hidden {
+  display: none;
+}

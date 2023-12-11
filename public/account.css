@@ -2,7 +2,7 @@ body {
   background-color: wheat;
 }
 
-header, .account-container, .account-form, .error-msg {
+header, .account-container, .account-form, #display-msg {
   text-align: center;
 }
 
@@ -31,6 +31,7 @@ header h1 {
 .account-form input {
   margin: 10px;
   height: 30px;
+  width: 90%;
 }
 
 .account-form button {
@@ -43,12 +44,27 @@ header h1 {
   background-color: beige;
 }
 
-.error-msg {
+#display-msg {
   width: 350px;
-  background-color: indianred;
   margin: auto;
+}
+
+.error-msg {
+  background-color: indianred;
+}
+
+.success-msg {
+  background-color: lawngreen;
 }
 
 .hidden {
   display: none;
+}
+
+.loading-cursor {
+  cursor: wait;
+}
+
+.link-disable {
+  pointer-events: none;
 }

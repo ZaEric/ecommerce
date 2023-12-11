@@ -10,61 +10,171 @@
 
   window.addEventListener("load", init);
 
+  /**
+   * Get all products on load and set up event listeners for the search bar and all buttons.
+   */
   function init() {
+    handleSearch("");
     let radios = qsa("input[name='product-display']");
     radios.forEach((radio) => {
       radio.addEventListener("change", toggleProductDisplay)
     });
     id("filter-select").addEventListener("change", filterProducts);
-    qs(".search-btn").addEventListener("submit", searchProducts);
-    searchProducts(window.location.search);
+    id("search-bar").addEventListener("submit", searchProducts);
+    id("back-btn").addEventListener("click", toggleDisplay);
+    id("add-cart-btn").addEventListener("click", addCart);
   }
 
+  /**
+   * Switches the display view between the general list of products and a detailed display of a
+   * specific product.
+   */
   function toggleProductDisplay() {
     id("search-result").classList.toggle("cozy");
     id("search-result").classList.toggle("compact");
   }
 
+  /**
+   * Handles the built in filter options. Filter products by category and get those products
+   * by querying the database.
+   */
   function filterProducts() {
     let filter = this.value;
-    let products = qsa(".product");
-    products.forEach((product) => {
-      if (filter === "none") {
-        product.classList.remove("hidden");
-      }
-      else {
-        if (!product.classList.contains(filter)) {
-          product.classList.add("hidden");
-        } else {
-          product.classList.remove("hidden");
-        }
-      }
-    });
+    handleSearch("?category=" + filter.toLowerCase());
   }
 
-  function searchProducts(query) {
-    let searchParams = new URLSearchParams(query);
-    let search = searchParams.get('search');
-    // get stuff from database with search
-    // qs("#search-result").innerHTML = "";
-    // create products, append to search-result
+  /**
+   * Takes the query input on the search bar and searches all products with a similar name or
+   * description to the query.
+   * @param {object} ele - the search bar form element, used to disable page refresh on submit
+   */
+  function searchProducts(ele) {
+    ele.preventDefault();
+    let query = id("search-query").value.trim();
+    query = query.length === 0 ? query : "?query=" + query;
+    handleSearch(query);
   }
 
+  /**
+   * Sends a search request to database for products matching the search. Search by category, names
+   * or description, or retrieve all products in the database. Displays the products to the user.
+   * @param {string} param - additional search parameters (if any)
+   */
+  function handleSearch(param) {
+    id("error-msg").classList.add("hidden");
+    fetch("/product/search" + param)
+      .then(statusCheck)
+      .then(res => res.json())
+      .then((res) => {
+        let display = id("search-result");
+        display.innerHTML = "";
+        res['products'].forEach((res) => {
+          let product = makeProduct(res);
+          product.addEventListener("click", getProductDetails);
+          id("search-result").appendChild(product);
+        });
+        id("search-query").value = "";
+      })
+      .catch(displayError);
+  }
+
+  /**
+   * Takes data about a product and converts it into an HTML element to display to the user.
+   * @param {object} product - data about a product in JS object form
+   * @returns {object} - product in HTML element form
+   */
   function makeProduct(product) {
-    // parse item info from database
     let container = gen("div");
     container.classList.add("product");
-    container.classList.add("none"); // product category
+    container.id = product.id;
     let img = gen("img");
-    img.src = "blah";
-    img.alt = "blah";
+    img.src = "img/" + product.image;
+    img.alt = product.name + " image";
     container.appendChild(img);
+    container.appendChild(makeProductText(product));
+    return container;
+  }
+
+  /**
+   * Formats the product data's text.
+   * @param {object} product - data about a product
+   * @returns {object} - the text component of the product to be displayed
+   */
+  function makeProductText(product) {
     let text = gen("div");
     text.classList.add("product-text");
-    text.appendChild(gen("p").textContent="name");
-    text.appendChild(gen("p").textContent="price");
-    container.appendChild(text);
-    return container;
+    let name = gen("p");
+    name.classList.add("product-name");
+    name.textContent = product.name;
+    let price = gen("p");
+    price.classList.add("product-price");
+    price.textContent = "$" + product.price;
+    text.appendChild(name);
+    text.appendChild(price);
+    return text;
+  }
+
+  /**
+   * Retrieves more detail about a specific product based on the product id. Displays the product to
+   * the user and switches view.
+   */
+  function getProductDetails() {
+    fetch("/product/get/" + this.id)
+      .then(statusCheck)
+      .then(res => res.json())
+      .then((res) => {
+        qs(".product-detail").id = this.id;
+        qs("#product-image img").src = "img/" + res.image;
+        qs("#product-image img").alt = "Image of " + res.name;
+        id("product-detail-name").textContent = res.name;
+        id("product-description").textContent = res.description;
+        qs("#product-detail-bottom p").textContent = "$" + res.price;
+        toggleDisplay();
+      })
+      .catch(displayError);
+  }
+
+  /**
+   * Add a product to the user's cart based on the product id. Returns a cart cookie containing a
+   * string epresenting the JSON notation of a JS object array.
+   */
+  function addCart() {
+    fetch("/cart/add/" + qs(".product-detail").id)
+      .then(statusCheck)
+      .then(res => res.text())
+      .then((res) => {
+        id("cart-msg").classList.remove("hidden");
+        id("cart-msg").textContent = res;
+      })
+      .catch(displayError);
+  }
+
+  /**
+   * Displays any errors returned by fetch requests to the user.
+   * @param {error} err - error from fetch request
+   */
+  function displayError(err) {
+    id("error-msg").classList.remove("hidden");
+    id("error-msg").textContent = err.message;
+  }
+
+  function toggleDisplay() {
+    id("error-msg").classList.add("hidden");
+    id("cart-msg").classList.add("hidden");
+    id("search-area").classList.toggle("hidden");
+    id("product-display").classList.toggle("hidden");
+  }
+
+  /**
+   * Checks if the response from a fetch request is valid or not.
+   * @param {object} response - response to be checked
+   * @returns {object} - response is valid, throws error if response not ok
+   */
+  async function statusCheck(response) {
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+    return response;
   }
 
   /**

@@ -22,7 +22,7 @@ Successfully created account for bob1.
 - Possible 400 error
   - If 'uname' already exists, return error with "Username already exists!"
 - Possible 500 error
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."
 
 ## Login to account
 **Request Format:** /account/login with POST parameters uname and pwrd
@@ -46,10 +46,10 @@ Welcome back, bob1.
   - if 'uname' doesn't exist or 'pwrd' doesn't match, return error with "Incorrect username
   or password!"
 - Possible 500 error
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."
 
 ## Retrieve detailed information about a specific product
-**Request Format:** /product/get/:product-id
+**Request Format:** /product/get/:id
 
 **Request Type:** GET
 
@@ -58,20 +58,24 @@ Welcome back, bob1.
 **Description:** Gets more detailed information about a specific product by its product id. This is
 done by the user clicking on a product in the search page.
 
-**Example Request:** /product/get/product1
+**Example Request:** /product/get/1
 
 **Example Response:**
 
 ```json
 {
-  {"id": "product1", "name": "Example1", "source": "img/example1.jpg", "price": "1000",
-  "decription": "Example1 is pretty cool.", "category": "computer"}
+  "id": "1",
+  "name": "Example1",
+  "image": "img/example1.jpg",
+  "price": "1000",
+  "description": "Example1 is pretty cool.",
+  "category": "computer"
 }
 ```
 
 **Error Handling:**
 - Possible 500 error (Plain Text)
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."
 
 ## Search for products matching criteria
 **Request Format:** /product/search
@@ -93,8 +97,21 @@ all products.
 
 ```json
 {
-  {"id": "product1", "name": "Example1", "source": "img/example1.jpg", "price": "1000"},
-  {"id": "product5","name": "Asus ROG Zephyrus G14", "source": "img/rog-zephy.jpg", "price": "1500"}
+  "products": [
+    {
+      "id": 1,
+      "name": "Example1",
+      "image": "img/example1.jpg",
+      "price": 1000
+    },
+    {
+      "id": 5,
+      "name": "Asus ROG Zephyrus G14",
+      "image": "img/rog-zephy.jpg",
+      "price": 1500
+    }
+    ...
+  ]
 }
 ```
 
@@ -103,10 +120,10 @@ all products.
   - If passed a query that returns no results, returns an error with "No products matching query.
   Please try again."
 - Possible 500 error (Plain text)
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."
 
 ## Add product to cart
-**Request Format:** /cart/add/:product-id
+**Request Format:** /cart/add/:id
 
 **Request Type:** GET
 
@@ -115,19 +132,56 @@ all products.
 **Description:** Adds a product into the user's cart. If product already exists in cart, increment
 the count of that specific product. Only works if user is logged into an account.
 
-**Example Request:** /cart/add/product1
+**Example Request:** /cart/add/1
 
 **Example Response:**
 
 ```
-Successfully added product into cart.
+Successfully added Example1 into cart.
 ```
 
 **Error Handling:**
 - Possible 400 error (Plain text)
   - If user is not logged in, return error with "Please login first before trying this!"
+  - If product id doesn't exist, return error with "Product does not exist!"
 - Possible 500 error (Plain text)
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."
+
+## Get cart items
+**Request Format:** /cart/all
+
+**Request Type:** GET
+
+**Returned Data Format**: JSON
+
+**Description:** Gets all the products in the current user's cart. Only works if the user is
+logged in to their account.
+
+**Example Request:** /cart/all
+
+**Example Response**
+
+```json
+{
+  "products": [
+    {
+      "id": 3,
+      "name": "Hololive Elite Miko T-Shirt",
+      "image": "elite-miko-shirt.jpg",
+      "price": 100,
+      "count": 1
+    },
+    ...
+  ]
+}
+```
+
+**Error Handling**
+- Possible 400 error (Plain text)
+  - If user is not logged in, return error with "Please login first before trying this!"
+  - If there is no item in cart, return error with "Cart is empty. Please add products to cart first."
+- Possible 500 error (Plain text)
+  - Server issue, return error with "An error occured on the server. Try again later."
 
 
 ## Purchase products in cart
@@ -151,22 +205,45 @@ Successfully completed purchase. Transaction id: bob1-1
 
 **Error Handling:**
 - Possible 400 error (Plain Text)
+  - If a product in the cart doesn't exist, return error with "A product in the cart does not exist!"
   - User does not have enough money to make this purchase, return error with "Not enough money for
-  this transaction!"
+  this transaction! Please add more funds."
 - Possible 500 error (Plain text)
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."
 
-
-## Add funds to user's account
-**Request Format:** /account/funds/:amount
+## View funds on user's account
+**Request Format:** /account/balance
 
 **Request Type:** GET
 
+**Returned Data Format** Plain Text
+
+**Description:** Gets the current balance stored in the user's wallet.
+
+**Example Request:** /account/balance
+
+**Example Response:**
+```
+2000
+```
+
+**Error Handling:**
+- Possible 400 error (Plain text)
+  - If user is not logged in, return error with "Please login first before trying this!"
+- Possible 500 error (Plain ext)
+  - Server issue, return error with "An error occured on the server. Try again later."
+
+
+## Add funds to user's account
+**Request Format:** /account/add with POST parameter amount
+
+**Request Type:** POST
+
 **Returned Data Format**: Plain Text
 
-**Description:** Loads balance onto the user's account for purchases.
+**Description:** Adds balance onto the user's account for future purchases.
 
-**Example Request:** /account/funds/2000
+**Example Request:** POST parameter of 'amount=2000'
 
 **Example Response:**
 
@@ -178,7 +255,7 @@ Successfully added $2000 to account!
 - Possible 400 error (Plain text)
   - If user is not logged in, return error with "Please login first before trying this!"
 - Possible 500 error (Plain text)
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."
 
 
 ## View transaction history
@@ -198,23 +275,24 @@ empty array if no history present.
 ```json
 {
   "bob1-1": {
+    "date": "2023-11-27 01:11:10",
+    "cost": "3500",
     "products": [
       {
-        "id": "product1",
+        "id": "1",
         "name": "Example1",
-        "source": "img/example1.jpg",
+        "image": "img/example1.jpg",
         "price": "1000",
         "count": "2"
       },
       {
-        "id": "product5",
+        "id": "5",
         "name": "Asus ROG Zephyrus G14",
-        "source": "img/rog-zephy.jpg",
+        "image": "img/rog-zephy.jpg",
         "price": "1500",
         "count": "1"
       }
-    ],
-    "cost": "3500"
+    ]
   },
   ...
 }
@@ -224,4 +302,4 @@ empty array if no history present.
 - Possible 400 error (Plain text)
   - If user is not logged in, return error with "Please login first before trying this!"
 - Possible 500 error (Plain text)
-  - Server issue, return error with "Something went wrong on the server."
+  - Server issue, return error with "An error occured on the server. Try again later."

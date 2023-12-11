@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--
+  Eric Wan
+  CSE 154 AB
+  FP
+  The my account page of ZaShop. Displays the purchase history of the user and lets the user add
+  funds to their account. Can only be accessed if the user is logged in.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="my-account.css">
+    <link rel="stylesheet" href="nav-bar.css">
+    <script src="account-validation.js"></script>
+    <script src="my-account.js"></script>
+  </head>
+  <body>
+    <section class="navbar">
+      <a href="cart.html">Cart</a>
+      <a id="logout-nav" class="hidden">Logout</a>
+      <a id="myaccount-nav" href="my-account.html" class="hidden">My Account</a>
+      <a id="createaccount-nav" href="create-account.html">Create Account</a>
+      <a id="login-nav" href="login.html">Login</a>
+      <a href="search.html">Search</a>
+    </section>
+    <main>
+      <h2 id="error-msg" class="hidden">Error msg.</h2>
+      <section class="display">
+        <h1 id="transaction-h1">Transactions</h1>
+        <section id="transactions-list" class="hidden">
+        </section>
+      </section>
+      <section class="display fund">
+        <h1 id="fund-h1">Funds</h1>
+        <section id="current-bal"><p></p></section>
+        <section id="add-balance">
+          <select>
+            <option value="100">$100</option>
+            <option value="1000" selected>$1000</option>
+            <option value="10000">$10000</option>
+            <option value="1000000">$1000000</option>
+          </select>
+          <button id="addfund-btn">Add fund</button>
+          <p id="success-msg" class="hidden">Success! Transaction id: bob1-1</p>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
