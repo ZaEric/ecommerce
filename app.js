@@ -185,7 +185,9 @@ app.get('/cart/add/:id', async function(req, res) {
   try {
     let id = req.params.id;
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) {return;}
+    if (!(await checkLoginStatus(req.cookies, db, res))) {
+      return;
+    }
     let name = await db.get("SELECT name FROM products WHERE id=?;", id);
     await db.close();
     if (name) {
@@ -230,7 +232,9 @@ function formatCart(cookies, id) {
 app.get('/cart/all', async function(req, res) {
   try {
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) {return;}
+    if (!(await checkLoginStatus(req.cookies, db, res))) {
+      return;
+    }
     if (req.cookies['cart']) {
       let cartMap = JSON.parse(req.cookies['cart']);
       let query = "SELECT id, name, image, price FROM products WHERE";
@@ -323,7 +327,9 @@ async function processCart(cookies, cartMap, db) {
 app.get('/account/balance', async function(req, res) {
   try {
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) {return};
+    if (!(await checkLoginStatus(req.cookies, db, res))) {
+      return;
+    }
     let bal = await getBalance(req.cookies, db);
     await db.close();
     res.type('text').send("" + bal);
