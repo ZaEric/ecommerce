@@ -111,7 +111,7 @@
     fetch("/account/balance")
       .then(statusCheck)
       .then(res => res.text())
-      .then(res => {qs("#current-bal p").textContent = "Wallet Balance: $" + res})
+      .then(res => {qs("#current-bal p").textContent = "Wallet Balance: $" + res;})
       .catch(displayError);
   }
 

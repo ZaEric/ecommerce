@@ -38,12 +38,12 @@ h1 {
   margin: auto;
 }
 
-#search-bar input[type=text], #search-bar button {
+#search-bar input[type='text'], #search-bar button {
   padding: 10px;
   border: 1px solid grey;
 }
 
-#search-bar input[type=text] {
+#search-bar input[type='text'] {
   background: #f1f1f1;
   font-size: 15px;
   width: 80%;

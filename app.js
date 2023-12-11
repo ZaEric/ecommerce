@@ -110,12 +110,12 @@ app.post('/account/login', async function(req, res) {
  * @returns {boolean} - True if all inputs valid, false otherwise
  */
 function checkRegisterInputs(email, uname, pwrd) {
-  const min_length = 5;
+  const minLength = 5;
   if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
     return "Please enter a valid email.";
   } else if (!uname.match(/^[\w]+$/)) {
     return "Username must contain only letters and numbers (underscores are allowed).";
-  } else if (pwrd.length < min_length) {
+  } else if (pwrd.length < minLength) {
     return "Password must be least 6 characters long.";
   } else if (!pwrd.match(/(?=.*\d)(?=.*[A-Z])/)) {
     return "Password must contain at least one uppercase letter and number";
@@ -185,9 +185,7 @@ app.get('/cart/add/:id', async function(req, res) {
   try {
     let id = req.params.id;
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) {
-      return;
-    }
+    if (!(await checkLoginStatus(req.cookies, db, res))) {return;}
     let name = await db.get("SELECT name FROM products WHERE id=?;", id);
     await db.close();
     if (name) {
@@ -232,18 +230,20 @@ function formatCart(cookies, id) {
 app.get('/cart/all', async function(req, res) {
   try {
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) {
-      return;
-    }
+    if (!(await checkLoginStatus(req.cookies, db, res))) {return;}
     if (req.cookies['cart']) {
       let cartMap = JSON.parse(req.cookies['cart']);
       let query = "SELECT id, name, image, price FROM products WHERE";
       let keys = Object.keys(cartMap);
-      keys.forEach((item) => {query += (" id=" + item + " OR")});
+      keys.forEach((item) => {
+        query += (" id=" + item + " OR");
+      });
       query = query.substring(0, query.length - 3) + ";";
       let results = await db.all(query);
       await db.close();
-      results.forEach((product) => {product['count'] = cartMap[product.id]});
+      results.forEach((product) => {
+        product['count'] = cartMap[product.id];
+      });
       res.json({"products": results});
     } else {
       handleRequestError(res, "Cart is empty. Please add products to cart first.");
@@ -323,7 +323,7 @@ async function processCart(cookies, cartMap, db) {
 app.get('/account/balance', async function(req, res) {
   try {
     let db = await getDBConnection();
-    if (!(await checkLoginStatus(req.cookies, db, res))) return;
+    if (!(await checkLoginStatus(req.cookies, db, res))) {return};
     let bal = await getBalance(req.cookies, db);
     await db.close();
     res.type('text').send("" + bal);
@@ -388,8 +388,8 @@ app.get('/account/history', async function(req, res) {
  */
 async function formatResult(tId, db) {
   let result = await db.get("SELECT date, cost FROM transactions WHERE t_id=?", tId);
-  let qry = "SELECT p.id, p.name, p.image, p.price, t.count FROM products p, transactionItems t"
-  + " WHERE p.id=t.p_id AND t.t_id=?";
+  let qry = "SELECT p.id, p.name, p.image, p.price, t.count FROM products p, transactionItems t" +
+  " WHERE p.id=t.p_id AND t.t_id=?";
   let products = await db.all(qry, tId);
   result['products'] = products;
   return result;
@@ -411,11 +411,10 @@ async function checkLoginStatus(cookies, db, res) {
     let test = await db.get("SELECT * FROM users WHERE uname=?", session);
     if (test && test.length !== 0) {
       return true;
-    } else {
-      await db.close();
-      handleRequestError(res, INVALID_SESSION_MSG);
-      return false;
     }
+    await db.close();
+    handleRequestError(res, INVALID_SESSION_MSG);
+    return false;
   }
   await db.close();
   handleRequestError(res, NO_SESSION_MSG);

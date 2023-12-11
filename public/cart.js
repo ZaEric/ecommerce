@@ -49,7 +49,7 @@
     fetch("/account/balance")
       .then(statusCheck)
       .then(res => res.text())
-      .then(res => {id("current-bal").textContent = "Current balance: $" + res})
+      .then(res => {id("current-bal").textContent = "Current balance: $" + res;})
       .catch(displayError);
   }
 
