@@ -79,7 +79,10 @@
         });
         id("search-query").value = "";
       })
-      .catch(displayError);
+      .catch((err) => {
+        id("search-result").innerHTML = "";
+        displayError(err);
+      });
   }
 
   /**

@@ -57,17 +57,13 @@ app.post('/account/create', async function(req, res) {
     try {
       let db = await getDBConnection();
       let qry = "INSERT INTO users (email, uname, pwrd) VALUES (?, ?, ?);";
-      let results = await db.run(qry, [email, uname, pwrd]);
+      await db.run(qry, [email, uname, pwrd]);
       await db.close();
-      if (results.changes === 1) {
-        res.cookie('session', uname, {maxAge: PERSIST_AGE, sameSite: 'lax'});
-        res.type("text").send("Successfully created account for " + uname);
-      } else {
-        handleServerError(res, "Something went wrong!");
-      }
+      res.cookie('session', uname, {maxAge: PERSIST_AGE, sameSite: 'lax'});
+      res.type("text").send("Successfully created account for " + uname);
     } catch (err) {
       if (err.code === 'SQLITE_CONSTRAINT') {
-        handleRequestError(res, "Username already exists!");
+        handleRequestError(res, "User already exists! Please login instead.");
       } else {
         handleServerError(res);
       }
@@ -110,7 +106,7 @@ app.post('/account/login', async function(req, res) {
  * @returns {boolean} - True if all inputs valid, false otherwise
  */
 function checkRegisterInputs(email, uname, pwrd) {
-  const minLength = 5;
+  const minLength = 6;
   if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) {
     return "Please enter a valid email.";
   } else if (!uname.match(/^[\w]+$/)) {
@@ -354,8 +350,9 @@ app.post('/account/add', async function(req, res) {
       bal = parseInt(amount) + bal;
       await db.run("UPDATE users SET bal=? WHERE uname=?", [bal, req.cookies['session']]);
       await db.close();
-      res.type('text').send("Successfully added $" + bal + " to account!");
+      res.type('text').send("Successfully added $" + parseInt(amount) + " to account!");
     } catch (err) {
+      console.log(err);
       handleServerError(res);
     }
   } else {

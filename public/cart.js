@@ -35,11 +35,11 @@
           totalCost += parseInt(product.price) * product.count;
         });
         id("total-cost").textContent = "Total Cost: $" + totalCost;
-        if (totalCost === 0) {
-          id("checkout-btn").disabled = true;
-        }
       })
-      .catch(displayError);
+      .catch((err) => {
+        id("checkout-btn").disabled = true;
+        displayError(err);
+      });
   }
 
   /**

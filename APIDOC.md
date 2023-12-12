@@ -20,7 +20,7 @@ Successfully created account for bob1.
 
 **Error Handling:**
 - Possible 400 error
-  - If 'uname' already exists, return error with "Username already exists!"
+  - If 'uname' already exists, return error with "User already exists! Please login instead."
 - Possible 500 error
   - Server issue, return error with "An error occured on the server. Try again later."
 
@@ -74,6 +74,8 @@ done by the user clicking on a product in the search page.
 ```
 
 **Error Handling:**
+- Possible 400 error (Plain Text)
+  - If product id doesn't exist in database, return error with "Product id does not exist in ZaShop!".
 - Possible 500 error (Plain Text)
   - Server issue, return error with "An error occured on the server. Try again later."
 

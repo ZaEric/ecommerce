@@ -128,6 +128,7 @@
       .then((res) => {
         const index = 17;
         id("success-msg").textContent = res;
+        id("success-msg").classList.remove("hidden");
         let oldBal = qs("#current-bal p").textContent;
         let newBal = parseInt(oldBal.substring(index)) + parseInt(amount);
         qs("#current-bal p").textContent = "Wallet Balance: $" + newBal;

@@ -74,8 +74,9 @@ h1 {
   cursor: pointer;
 }
 
-.cozy, .compact {
+#search-result {
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .cozy > div {
