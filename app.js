@@ -352,7 +352,6 @@ app.post('/account/add', async function(req, res) {
       await db.close();
       res.type('text').send("Successfully added $" + parseInt(amount) + " to account!");
     } catch (err) {
-      console.log(err);
       handleServerError(res);
     }
   } else {
